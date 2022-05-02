@@ -63,6 +63,13 @@ describe("Vote", function () {
             expect(proposalsData[1]).to.equal(acc1.address)
         })
 
+        it ("Getting proposals info from not existing vote ", async function() {
+            
+            await expect( vote.getProposalsInfo(2, 0)).to.be.revertedWith("This poll does not exist.")
+            
+        })
+
+
         it ("Should make a vote", async function() {
             const tx = await vote.vote(0, 0, {value:ethers.utils.parseEther("1.0")})
             const amountOfVotes = await vote.getProposalsInfo(0, 0)
@@ -97,9 +104,25 @@ describe("Vote", function () {
             await expect(vote.closeVote(1)).to.be.revertedWith(
                 "This vote does not exist.")   
         })
+
+        it ("Sending money to winner", async function(){
+            await vote.vote(0, 0, {value:ethers.utils.parseEther("1.0")})
+            await ethers.provider.send('evm_increaseTime', [3 * 86400])
+            const tx = await vote.closeVote(0)
+            await expect(() => tx).to.changeEtherBalances([vote, acc1],
+                 [ethers.utils.parseEther('-0.9'),ethers.utils.parseEther('0.9')])
+        })
+
+        it ("Check voting proccess", async function() {
+            await vote.vote(0, 0, {value:ethers.utils.parseEther("1.0")})
+            await vote.connect(acc1).vote(0, 0, {value:ethers.utils.parseEther("1.0")})
+            await vote.connect(acc2).vote(0, 1, {value:ethers.utils.parseEther("1.0")})
+        })
+
         describe("Vote closing tests", function(){
             beforeEach(async function() {
-                await ethers.provider.send('evm_increaseTime', [3 * 86400]);
+                await vote.vote(0, 0, {value:ethers.utils.parseEther("1.0")}) 
+                await ethers.provider.send('evm_increaseTime', [3 * 86400])
                 await vote.closeVote(0) 
             })
              it ("Vote should be closed", async function() {
@@ -108,7 +131,22 @@ describe("Vote", function () {
                 expect(openedVotes[0] == false)
              })
 
-             it ("")
+             it ("", async function(){
+                await expect(vote.closeVote(0)).to.be.revertedWith(
+                    "This poll is already closed!")    
+             })
+
+             it ("Should revert voting becouse of closed vote.", async function() {
+                await expect(vote.vote(0, 0, {value:ethers.utils.parseEther("1.0")})).to.be.revertedWith(
+                    "This poll is closed!")   
+             })
+
+             it ("Getting commision", async function() {
+             
+                const tx = await vote.getCommission()
+                await expect(() => tx).to.changeEtherBalances([owner, vote],
+                     [ethers.utils.parseEther('0.1'),ethers.utils.parseEther('-0.1')]) 
+             }) 
 
         })
 

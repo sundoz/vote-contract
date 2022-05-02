@@ -26,6 +26,7 @@ contract Vote {
         Proposal[] proposals;
         uint256 winningProposal;
         uint256 winningAmoungOfVotes;
+        uint256 moneyOnVote;
     }
     bool[] pollsList;
     Vote[] votes;
@@ -83,7 +84,7 @@ contract Vote {
         require(votes.length > numberOfVote,
                  "This poll does not exist.");
         require(votes[numberOfVote].isVoteOnline == true,
-                 "This poll is closed.");
+                 "This poll is closed!");
         require(msg.value >= 10 ** 17, 
                 "Minimal deposit 0.1 ETH");
         require(votes[numberOfVote].voters[msg.sender] == false,
@@ -91,6 +92,7 @@ contract Vote {
 
         votes[numberOfVote].proposals[proposal].voteCount += 1;
         votes[numberOfVote].voters[msg.sender] = true;
+        votes[numberOfVote].moneyOnVote += msg.value;
         if (votes[numberOfVote].proposals[proposal].voteCount > 
             votes[numberOfVote].winningAmoungOfVotes) {
 
@@ -107,7 +109,7 @@ contract Vote {
         require(votes.length > numberOfVote,
                  "This vote does not exist.");
         require(votes[numberOfVote].isVoteOnline == true,
-                 "This poll is already closed.");
+                 "This poll is already closed!");
         
         require(votes[numberOfVote].votePublishTime + 3 * dayToSeconds <= block.timestamp, 
                 "Voting lasts three days!");
@@ -116,7 +118,7 @@ contract Vote {
         
         address payable winnerAddress = payable(winner.sendAddress);
 
-        winnerAddress.transfer(address(this).balance * 9 / 10);
+        winnerAddress.transfer(votes[numberOfVote].moneyOnVote * 9 / 10);
         votes[numberOfVote].isVoteOnline = false;
         pollsList[numberOfVote] = false;
         // to do
