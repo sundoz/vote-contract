@@ -9,7 +9,7 @@ async function main() {
 
   await vote.deployed();
 
-  console.log("Greeter deployed to:", vote.address);
+  console.log("Vote-contract deployed to:", vote.address);
 }
 
 

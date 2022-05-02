@@ -1,6 +1,9 @@
 require("@nomiclabs/hardhat-waffle");
 require("dotenv").config()
 require("solidity-coverage")
+require("./tasks/tasks")
+const VotesArtifact = require('./artifacts/contracts/Vote.sol/Vote.json')
+
 module.exports = {
   solidity: "0.8.4",
 

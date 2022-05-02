@@ -65,7 +65,7 @@ describe("Vote", function () {
 
         it ("Getting proposals info from not existing vote ", async function() {
             
-            await expect( vote.getProposalsInfo(2, 0)).to.be.revertedWith("This poll does not exist.")
+            await expect(vote.getProposalsInfo(2, 0)).to.be.revertedWith("This poll does not exist.")
             
         })
 
