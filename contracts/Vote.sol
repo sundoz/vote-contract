@@ -49,11 +49,11 @@ contract Vote {
     */
     function createVote(address[] memory proposalAddresses,
                          string[] memory proposalNames) onlyOwner public {
-        
+        require(proposalAddresses.length != 0, "Amount of proposals > 0");
         require(proposalAddresses.length == proposalNames.length,
                  "Amount of addresses have to be equal to amount of names."
                  );
-        require(proposalAddresses.length != 0, "Amount of proposals > 0");
+        
         votes.push();
         uint lastOfPolls = votes.length - 1;
         for (uint i = 0; i < proposalNames.length; i++) {
@@ -105,12 +105,13 @@ contract Vote {
     */
     function closeVote(uint numberOfVote) public payable{
         require(votes.length > numberOfVote,
-                 "This poll does not exist.");
+                 "This vote does not exist.");
         require(votes[numberOfVote].isVoteOnline == true,
                  "This poll is already closed.");
         
-        require(votes[numberOfVote].votePublishTime + 3 * dayToSeconds <= block.timestamp);
-
+        require(votes[numberOfVote].votePublishTime + 3 * dayToSeconds <= block.timestamp, 
+                "Voting lasts three days!");
+        
         Proposal memory winner = votes[numberOfVote].proposals[votes[numberOfVote].winningProposal];
         
         address payable winnerAddress = payable(winner.sendAddress);
