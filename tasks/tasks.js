@@ -56,3 +56,19 @@ task("voting", "vote for someone")
         console.log(result)
 
     })
+
+    
+    task("close", "Close the vote")
+    .addParam('numberofvote', 'Number of voting')
+    .addAction(async (taskArgs, hre) => {
+        const [owner] = await ethers.getSigners() 
+        const numberOfVote = taskArgs.numberofvote
+        
+        const voteContract = new ethers.Contract(
+            process.env.ADDRESS,
+            VotesArtifact.abi,
+            owner
+        ) 
+        const result = await voteContract.closeVote(numberOfVote)
+        console.log(result)
+    })
