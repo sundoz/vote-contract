@@ -93,7 +93,7 @@ describe("Vote", function () {
                 "You have already voted")   
         })
 
-        it ("Should not close vote becouse of the time to vote", async function() {
+        it ("Should not close vote because of the time to vote", async function() {
            
             await expect(vote.closeVote(0)).to.be.revertedWith(
                 "Voting lasts three days!")   
@@ -138,7 +138,7 @@ describe("Vote", function () {
 
              it ("Should revert voting becouse of closed vote.", async function() {
                 await expect(vote.vote(0, 0, {value:ethers.utils.parseEther("1.0")})).to.be.revertedWith(
-                    "This poll is closed!")   
+                    "Vote is closed")   
              })
 
              it ("Getting commision", async function() {

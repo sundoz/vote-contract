@@ -83,8 +83,8 @@ contract Vote {
     function vote(uint numberOfVote, uint proposal) public payable {
         require(votes.length > numberOfVote,
                  "This poll does not exist.");
-        require(votes[numberOfVote].isVoteOnline == true,
-                 "This poll is closed!");
+         require(votes[numberOfVote].votePublishTime + 3 * dayToSeconds > block.timestamp, 
+                "Vote is closed");
         require(msg.value >= 10 ** 17, 
                 "Minimal deposit 0.1 ETH");
         require(votes[numberOfVote].voters[msg.sender] == false,
@@ -119,6 +119,8 @@ contract Vote {
         address payable winnerAddress = payable(winner.sendAddress);
 
         winnerAddress.transfer(votes[numberOfVote].moneyOnVote * 9 / 10);
+        votes[numberOfVote].moneyOnVote = 
+            votes[numberOfVote].moneyOnVote / 10;
         votes[numberOfVote].isVoteOnline = false;
         pollsList[numberOfVote] = false;
         // to do
@@ -127,11 +129,11 @@ contract Vote {
     /**
     * @dev send commission to the owner
     */
-    function getCommission() public onlyOwner payable{
-
+    function getCommission(uint voteNumber) public onlyOwner payable{
+        require(votes[voteNumber].isVoteOnline == false, "This vote is still online!");
         address payable ownerAddress = payable(msg.sender);
 
-        ownerAddress.transfer(address(this).balance);
+        ownerAddress.transfer(votes[voteNumber].moneyOnVote);
     }
     /**
     * @dev say is vote open and amount of candidats in it
