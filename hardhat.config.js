@@ -1,7 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("dotenv").config()
 require("solidity-coverage")
-require("./tasks/tasks")
+//require("./tasks/tasks")
 const VotesArtifact = require('./artifacts/contracts/Vote.sol/Vote.json')
 
 module.exports = {

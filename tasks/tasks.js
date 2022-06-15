@@ -1,4 +1,4 @@
-//const { ethers } = require("hardhat");
+
 const { task } = require('hardhat/config');
 const VotesArtifact = require('../artifacts/contracts/Vote.sol/Vote.json')
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {

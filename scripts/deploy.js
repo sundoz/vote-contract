@@ -1,7 +1,6 @@
 
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
-
 async function main() {
   const [owner, acc1, acc2] = await ethers.getSigners()
   const Vote = await hre.ethers.getContractFactory('Vote', owner);

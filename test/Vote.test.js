@@ -83,8 +83,8 @@ describe("Vote", function () {
         })
         
         it ("Should revert becouse of minimal deposit", async function() {
-            await expect(vote.vote(0, 0, {value:ethers.utils.parseEther("0.01")})).to.be.revertedWith(
-                "Minimal deposit 0.1 ETH")   
+            await expect(vote.vote(0, 0, {value:ethers.utils.parseEther("0.001")})).to.be.revertedWith(
+                "Minimal deposit 0.01 ETH")   
         })
         
         it ("Should revert because of double voting", async function() {
@@ -119,6 +119,11 @@ describe("Vote", function () {
             await vote.connect(acc2).vote(0, 1, {value:ethers.utils.parseEther("1.0")})
         })
 
+        it ("Trying to get commission but vote is still online", async function() {
+            
+            await expect(vote.getCommission(0)).to.be.revertedWith("This vote is still online!")
+        })
+
         describe("Vote closing tests", function(){
             beforeEach(async function() {
                 await vote.vote(0, 0, {value:ethers.utils.parseEther("1.0")}) 
@@ -136,17 +141,19 @@ describe("Vote", function () {
                     "This poll is already closed!")    
              })
 
-             it ("Should revert voting becouse of closed vote.", async function() {
+             it ("Should revert voting because of closed vote.", async function() {
                 await expect(vote.vote(0, 0, {value:ethers.utils.parseEther("1.0")})).to.be.revertedWith(
                     "Vote is closed")   
              })
 
              it ("Getting commision", async function() {
              
-                const tx = await vote.getCommission()
+                const tx = await vote.getCommission(0)
                 await expect(() => tx).to.changeEtherBalances([owner, vote],
                      [ethers.utils.parseEther('0.1'),ethers.utils.parseEther('-0.1')]) 
              }) 
+
+             
 
         })
 

@@ -85,8 +85,8 @@ contract Vote {
                  "This poll does not exist.");
          require(votes[numberOfVote].votePublishTime + 3 * dayToSeconds > block.timestamp, 
                 "Vote is closed");
-        require(msg.value >= 10 ** 17, 
-                "Minimal deposit 0.1 ETH");
+        require(msg.value >= 10 ** 16, 
+                "Minimal deposit 0.01 ETH");
         require(votes[numberOfVote].voters[msg.sender] == false,
                  "You have already voted");
 
@@ -134,6 +134,7 @@ contract Vote {
         address payable ownerAddress = payable(msg.sender);
 
         ownerAddress.transfer(votes[voteNumber].moneyOnVote);
+        votes[voteNumber].moneyOnVote = 0;
     }
     /**
     * @dev say is vote open and amount of candidats in it
